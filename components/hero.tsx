@@ -1,28 +1,53 @@
 'use client';
 
 import Image from 'next/image';
-import { Linkedin, Code2, Globe, Github, Mail } from 'lucide-react';
+import { Linkedin, Code2, Globe, Github, Mail, Cpu, Terminal } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 interface HeroProps {
   setActiveSection: (section: string) => void;
 }
 
 const Hero = ({ setActiveSection }: HeroProps) => {
+  const [displayName, setDisplayName] = useState('');
+  const fullName = "Sudipta Chatterjee";
+
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i <= fullName.length) {
+        setDisplayName(fullName.slice(0, i));
+        i++;
+      } else {
+        clearInterval(timer);
+      }
+    }, 100);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <section id="home" className="relative h-screen w-full bg-[#1a1a1a] overflow-hidden flex flex-col items-center justify-center text-white">
+    <section id="home" className="relative h-screen w-full bg-[#0a0a0a] overflow-hidden flex flex-col items-center justify-center text-white">
+      {/* Scanline Effect */}
+      <div className="scanline"></div>
+      {/* Tech Grid Background (Mobile Specific Accent) */}
+      <div className="absolute inset-0 tech-grid opacity-[0.15] md:opacity-[0.05] pointer-events-none"></div>
 
       {/* Top Header Layer */}
-      <div className="absolute top-0 w-full p-8 flex justify-between items-center z-50">
-        <div className="text-xl font-bold tracking-wider text-gray-300 font-zenitha">
-          <span className="text-orange-500">{`{...}`}</span> Sudipta Chatterjee<span className="text-orange-500">.</span>
+      <div className="absolute top-0 w-full pt-8 px-4 pb-3 md:p-8 flex justify-between items-center gap-2 z-50">
+        <div className="flex-1 min-w-0">
+          <div className="text-[13px] md:text-xl font-mono font-bold tracking-wider text-gray-300 truncate py-1 px-2 border-l-2 border-orange-500/50 bg-orange-500/5">
+            <span className="text-orange-500 font-bold">{"> "}</span>
+            {displayName}
+            <span className="text-orange-500 typewriter-cursor ml-1"></span>
+          </div>
         </div>
         <a
           href="/resume.pdf"
           download
-          className="px-6 py-2 bg-white text-black font-bold rounded-full text-sm hover:bg-gray-200 transition-colors"
+          className="px-3 md:px-6 py-2 bg-transparent text-orange-500 font-mono font-bold border border-orange-500/50 rounded-md text-[10px] md:text-sm hover:bg-orange-500/10 transition-all whitespace-nowrap flex-shrink-0 shadow-[0_0_15px_rgba(249,115,22,0.2)]"
         >
-          Download Resume
+          [ DOWNLOAD_CV ]
         </a>
       </div>
 
@@ -59,43 +84,108 @@ const Hero = ({ setActiveSection }: HeroProps) => {
             />
           </motion.div>
 
-          <h1 className="text-[16vw] md:text-[15vw] leading-none font-black text-white/5 select-none tracking-tighter mt-[-40px] md:mt-0 font-zenitha">
+          <h1 className="text-[20vw] md:text-[15vw] leading-none font-black text-white/5 select-none tracking-tighter mt-[-10vh] md:mt-0">
             DEVELOPER
           </h1>
           {/* Outline version overlay for effect */}
-          <h1 className="absolute text-[16vw] md:text-[15vw] leading-none font-black text-transparent select-none tracking-tighter mt-[-40px] md:mt-0 font-zenitha"
+          <h1 className="absolute text-[20vw] md:text-[15vw] leading-none font-black text-transparent select-none tracking-tighter mt-[-10vh] md:mt-0"
             style={{ WebkitTextStroke: '2px rgba(255,255,255,0.1)' }}>
             DEVELOPER
           </h1>
         </div>
 
         {/* Central Image & Floating Elements */}
-        <div className="relative z-10 w-full max-w-4xl mx-auto h-[60vh] md:h-[70vh] flex items-end justify-center">
+        <div className="relative z-10 w-full max-w-4xl mx-auto h-[80vh] md:h-[70vh] flex items-center md:items-end justify-center">
 
           {/* Main Character Image */}
           <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="relative w-[300px] h-[450px] md:w-[450px] md:h-[600px]"
+            initial={{ opacity: 0, scale: 0.9, y: 50 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="relative w-[90vw] h-[60vh] max-w-[450px] md:w-[450px] md:h-[600px] -mt-[5vh] md:mt-0"
           >
-            {/* Added a subtle glow/drop shadow to make it pop without B&W filter */}
-            <div className="absolute inset-0 bg-orange-500/10 rounded-full blur-[80px] -z-10"></div>
+            {/* Enhanced Glow Effect */}
+            <div className="absolute inset-0 bg-orange-500/20 rounded-full blur-[100px] -z-10 animate-pulse"></div>
             <Image
               src="/hero-image.png?v=2"
               alt="Sudipta Chatterjee"
               fill
-              className="object-contain object-bottom drop-shadow-2xl"
+              className="object-contain object-bottom drop-shadow-[0_20px_50px_rgba(249,115,22,0.3)]"
               priority
               unoptimized
             />
           </motion.div>
 
+          {/* Floating Code Fragments */}
+          <motion.div
+            animate={{
+              y: [0, -10, 0],
+              rotate: [0, 5, 0]
+            }}
+            transition={{ duration: 3, repeat: Infinity }}
+            className="absolute left-[10%] top-[20%] text-orange-500/20 font-mono text-4xl pointer-events-none select-none hidden md:block"
+          >
+            {`{ }`}
+          </motion.div>
+
+          <motion.div
+            animate={{
+              y: [0, 10, 0],
+              rotate: [0, -5, 0]
+            }}
+            transition={{ duration: 4, repeat: Infinity, delay: 1 }}
+            className="absolute right-[15%] top-[15%] text-orange-500/10 font-mono text-6xl pointer-events-none select-none hidden md:block"
+          >
+            {`< />`}
+          </motion.div>
+
+          {/* Mobile Optimized Badges - Only visible on small screens */}
+          <div className="md:hidden absolute inset-0 pointer-events-none">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{
+                opacity: 1,
+                x: 0,
+                y: [0, -5, 0] // Floating loop
+              }}
+              viewport={{ once: true }}
+              transition={{
+                opacity: { duration: 1, delay: 0.2, ease: "easeOut" },
+                x: { duration: 1, delay: 0.2, ease: "easeOut" },
+                y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1.2 }
+              }}
+              className="absolute left-[8%] top-[15%] backdrop-blur-md bg-black/40 border border-orange-500/30 px-3 py-1.5 rounded-md flex items-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.1)]"
+            >
+              <Terminal size={12} className="text-orange-500 line-shadow" />
+              <span className="text-[9px] font-mono font-bold text-orange-100 whitespace-nowrap">MODULE: MERN</span>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{
+                opacity: 1,
+                x: 0,
+                y: [0, 5, 0] // Floating loop
+              }}
+              viewport={{ once: true }}
+              transition={{
+                opacity: { duration: 1, delay: 0.4, ease: "easeOut" },
+                x: { duration: 1, delay: 0.4, ease: "easeOut" },
+                y: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.4 }
+              }}
+              className="absolute right-[8%] top-[25%] backdrop-blur-md bg-black/40 border border-orange-500/30 px-3 py-1.5 rounded-md flex items-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.1)]"
+            >
+              <Cpu size={12} className="text-orange-500" />
+              <span className="text-[9px] font-mono font-bold text-orange-100 whitespace-nowrap">STATUS: ACTIVE</span>
+            </motion.div>
+          </div>
+
           {/* Floating Card: Stack/Focus - Hidden on mobile */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
+            transition={{ delay: 0.4, duration: 1.2, ease: "easeOut" }}
             className="hidden md:flex absolute left-[5%] top-[60%] backdrop-blur-md bg-white/5 border border-white/10 p-4 rounded-2xl items-center gap-4 hover:scale-105 transition-transform cursor-default"
           >
             <div className="p-3 bg-white/10 rounded-full">
@@ -114,7 +204,7 @@ const Hero = ({ setActiveSection }: HeroProps) => {
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
+            transition={{ delay: 0.6, duration: 1.2, ease: "easeOut" }}
             className="hidden md:block absolute right-[5%] top-[50%] backdrop-blur-md bg-white/10 border border-white/20 p-5 rounded-2xl max-w-xs hover:bg-white/15 transition-colors cursor-default"
           >
             <div className="flex items-center gap-3 mb-2">

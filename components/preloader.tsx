@@ -1,47 +1,97 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 const Preloader = () => {
-    const [index, setIndex] = useState(0);
-    const words = ["Hello", "Namaste", "Developer", "Designer", "Sudipta Chatterjee"];
+    const [phase, setPhase] = useState<'greeting' | 'terminal'>('greeting');
+    const [greetingIdx, setGreetingIdx] = useState(0);
+    const [logs, setLogs] = useState<string[]>([]);
+    const [isComplete, setIsComplete] = useState(false);
+
+    const greetings = ["Hello", "Namaste", "Developer", "Designer", "Sudipta Chatterjee"];
+
+    const sequence = [
+        "> INITIALIZING SYSTEM...",
+        "> LOADING MERN_STACK_MODULES...",
+        "> ESTABLISHING NEURAL_LINK...",
+        "> ACCESSING PORTFOLIO.DB...",
+        "> SUCCESS: IDENTITY VERIFIED",
+        "> WELCOME, SUDIPTA"
+    ];
 
     useEffect(() => {
-        if (index == words.length - 1) return;
-        const timeout = setTimeout(() => {
-            setIndex(index + 1);
-        }, 200); // Speed of word switching
-        return () => clearTimeout(timeout);
-    }, [index, words.length]);
+        if (phase === 'greeting') {
+            const interval = setInterval(() => {
+                if (greetingIdx < greetings.length - 1) {
+                    setGreetingIdx(prev => prev + 1);
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => setPhase('terminal'), 500);
+                }
+            }, 150);
+            return () => clearInterval(interval);
+        } else {
+            let logIdx = 0;
+            const interval = setInterval(() => {
+                if (logIdx < sequence.length) {
+                    setLogs(prev => [...prev, sequence[logIdx]]);
+                    logIdx++;
+                } else {
+                    clearInterval(interval);
+                    setTimeout(() => setIsComplete(true), 500);
+                }
+            }, 100);
+            return () => clearInterval(interval);
+        }
+    }, [phase, greetingIdx]);
 
     return (
-        <motion.div
-            initial={{ height: '100vh' }}
-            animate={{ height: 0 }}
-            transition={{ duration: 0.8, delay: 1.5, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#1a1a1a] overflow-hidden"
-        >
-            {/* Animated Text */}
-            <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-white text-4xl md:text-6xl font-bold flex items-center justify-center absolute z-10"
-            >
-                <span className="mr-2 text-orange-500">•</span>
-                {words[index]}
-            </motion.p>
+        <AnimatePresence>
+            {!isComplete && (
+                <motion.div
+                    key="preloader-overlay"
+                    exit={{ opacity: 0, scale: 1.1 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0a0a0a] overflow-hidden p-6"
+                >
+                    <div className="w-full max-w-2xl font-mono">
+                        {phase === 'greeting' ? (
+                            <motion.div
+                                key="greeting"
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                className="text-white text-3xl md:text-5xl font-bold text-center"
+                            >
+                                <span className="text-orange-500 mr-4 font-mono">{">"}</span>
+                                {greetings[greetingIdx]}
+                            </motion.div>
+                        ) : (
+                            <div className="flex flex-col gap-1 text-sm md:text-base leading-relaxed">
+                                {logs.map((log, i) => (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        className={i === sequence.length - 1 ? "text-orange-500 font-bold" : "text-orange-500/70"}
+                                    >
+                                        {log}
+                                    </motion.div>
+                                ))}
+                                <div className="text-orange-500 typewriter-cursor"></div>
+                            </div>
+                        )}
+                    </div>
 
-            {/* Path/Curtain Effect */}
-            <svg className="absolute w-full h-[calc(100%+300px)] pointer-events-none">
-                <motion.path
-                    initial={{ d: "M0 0 L100 0 L100 100 Q100 100 50 100 Q0 100 0 100 Z" }} // Flat bottom
-                    exit={{ d: "M0 0 L100 0 L100 0 Q100 0 50 0 Q0 0 0 0 Z" }} // Pull up
-                    transition={{ duration: 0.7, ease: [0.76, 0, 0.24, 1], delay: 1.5 }}
-                    fill="#1a1a1a"
-                />
-            </svg>
-        </motion.div>
+                    {/* Matrix-like subtle background */}
+                    <div className="absolute inset-0 opacity-[0.03] pointer-events-none select-none overflow-hidden text-[10px] text-orange-500 break-all leading-none font-mono">
+                        {Array(100).fill(0).map((_, i) => (
+                            <div key={i}>011010100111010010110101010011101101010100111011010110100101</div>
+                        ))}
+                    </div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 };
 
