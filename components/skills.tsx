@@ -5,7 +5,7 @@ import { Cpu, Globe, Database, PenTool, Terminal, Layers } from 'lucide-react';
 import { MouseEvent } from 'react';
 import AnimatedBackground from './animated-background';
 
-const Skills = () => {
+const Skills = ({ isLoaded = true }: { isLoaded?: boolean }) => {
   const skillCategories = [
     {
       title: 'Frontend',
@@ -45,9 +45,8 @@ const Skills = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
           className="mb-20"
         >
           <span className="text-orange-500 font-bold tracking-wider uppercase text-sm">Technical Proficiency</span>
@@ -59,9 +58,24 @@ const Skills = () => {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.1,
+                delayChildren: 0.3
+              }
+            }
+          }}
+          initial="hidden"
+          whileInView={isLoaded ? "show" : "hidden"}
+          viewport={{ once: true, amount: 0.2, margin: "-10% 0px" }}
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           {skillCategories.map((category, index) => (
-            <SpotlightCard key={index} delay={index * 0.1}>
+            <SpotlightCard key={index}>
               <div className="p-8 relative z-10 h-full">
                 <div className="flex items-center gap-4 mb-6">
                   <div className="p-3 bg-white/5 rounded-xl text-orange-500 group-hover:bg-orange-500 group-hover:text-white transition-all">
@@ -70,20 +84,36 @@ const Skills = () => {
                   <h3 className="text-xl font-bold text-white">{category.title}</h3>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0 },
+                    show: {
+                      opacity: 1,
+                      transition: {
+                        staggerChildren: 0.05,
+                        delayChildren: 0.2
+                      }
+                    }
+                  }}
+                  className="flex flex-wrap gap-2"
+                >
                   {category.skills.map((skill, idx) => (
-                    <span
+                    <motion.span
                       key={idx}
+                      variants={{
+                        hidden: { opacity: 0, scale: 0.8 },
+                        show: { opacity: 1, scale: 1 }
+                      }}
                       className="px-3 py-1 bg-black/40 border border-white/5 rounded-lg text-sm text-gray-400 group-hover:text-gray-200 transition-colors"
                     >
                       {skill}
-                    </span>
+                    </motion.span>
                   ))}
-                </div>
+                </motion.div>
               </div>
             </SpotlightCard>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -101,11 +131,27 @@ function SpotlightCard({ children, delay = 0 }: { children: React.ReactNode; del
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
-      viewport={{ once: true }}
-      className="group relative border border-white/10 bg-white/5 overflow-hidden rounded-2xl"
+      variants={{
+        hidden: { opacity: 0, scale: 0.9, y: 15 },
+        show: {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          transition: {
+            type: "spring",
+            stiffness: 90,
+            damping: 12
+          }
+        }
+      }}
+      whileHover={{
+        y: -10,
+        scale: 1.03,
+        borderColor: "rgba(249, 115, 22, 0.5)",
+        backgroundColor: "rgba(255, 255, 255, 0.08)"
+      }}
+      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      className="group relative border border-white/10 bg-white/5 overflow-hidden rounded-2xl h-full cursor-pointer"
       onMouseMove={handleMouseMove}
     >
       <motion.div

@@ -5,7 +5,7 @@ import { motion, useMotionTemplate, useMotionValue } from 'framer-motion';
 import { MouseEvent } from 'react';
 import AnimatedBackground from './animated-background';
 
-const Projects = () => {
+const Projects = ({ isLoaded = true }: { isLoaded?: boolean }) => {
   const projects = [
     {
       title: 'Social Media Platform',
@@ -76,9 +76,8 @@ const Projects = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
           className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4"
         >
           <div>
@@ -94,18 +93,39 @@ const Projects = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.15,
+                delayChildren: 0.2
+              }
+            }
+          }}
+          initial="hidden"
+          whileInView={isLoaded ? "show" : "hidden"}
+          viewport={{ once: true, amount: 0.2, margin: "-10% 0px" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           {projects.map((project, index) => (
-            <SpotlightCard key={index} delay={index * 0.1}>
+            <SpotlightCard key={index}>
               <div className="p-8 h-full flex flex-col relative z-10">
                 <div className="flex justify-between items-start mb-6">
                   <div className="p-3 bg-white/5 rounded-xl text-white group-hover:bg-orange-500 group-hover:text-white transition-colors">
                     <ArrowUpRight size={24} />
                   </div>
-                  <div className="flex gap-2">
-                    <a href={project.github} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><Github size={20} /></a>
-                    <a href={project.live} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><ExternalLink size={20} /></a>
-                  </div>
+                  <motion.div
+                    variants={{
+                      hidden: { opacity: 0 },
+                      show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+                    }}
+                    className="flex gap-2"
+                  >
+                    <motion.a variants={{ hidden: { opacity: 0, scale: 0.5 }, show: { opacity: 1, scale: 1 } }} href={project.github} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><Github size={20} /></motion.a>
+                    <motion.a variants={{ hidden: { opacity: 0, scale: 0.5 }, show: { opacity: 1, scale: 1 } }} href={project.live} className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"><ExternalLink size={20} /></motion.a>
+                  </motion.div>
                 </div>
 
                 <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-orange-400 transition-colors">{project.title}</h3>
@@ -114,21 +134,48 @@ const Projects = () => {
                   {project.description}
                 </p>
 
-                {/* Tech Stack */}
-                <div className="flex flex-wrap gap-2 pt-6 border-t border-white/5">
+                {/* Tech Stack - Staggered */}
+                <motion.div
+                  variants={{
+                    hidden: { opacity: 0 },
+                    show: {
+                      opacity: 1,
+                      transition: {
+                        staggerChildren: 0.1,
+                        delayChildren: 0.4
+                      }
+                    }
+                  }}
+                  className="flex flex-wrap gap-2 pt-6 border-t border-white/5"
+                >
                   {project.technologies.slice(0, 3).map((tech, idx) => (
-                    <span key={idx} className="text-xs font-medium text-gray-300 bg-black/30 px-3 py-1 rounded-full border border-white/5">
+                    <motion.span
+                      key={idx}
+                      variants={{
+                        hidden: { opacity: 0, y: 5 },
+                        show: { opacity: 1, y: 0 }
+                      }}
+                      className="text-xs font-medium text-gray-300 bg-black/30 px-3 py-1 rounded-full border border-white/5"
+                    >
                       {tech}
-                    </span>
+                    </motion.span>
                   ))}
                   {project.technologies.length > 3 && (
-                    <span className="text-xs font-medium text-gray-500 px-2 py-1">+ {project.technologies.length - 3}</span>
+                    <motion.span
+                      variants={{
+                        hidden: { opacity: 0 },
+                        show: { opacity: 1 }
+                      }}
+                      className="text-xs font-medium text-gray-500 px-2 py-1"
+                    >
+                      + {project.technologies.length - 3}
+                    </motion.span>
                   )}
-                </div>
+                </motion.div>
               </div>
             </SpotlightCard>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -146,11 +193,28 @@ function SpotlightCard({ children, delay = 0 }: { children: React.ReactNode; del
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
-      viewport={{ once: true }}
-      className="group relative border border-white/10 bg-white/5 overflow-hidden rounded-xl"
+      variants={{
+        hidden: { opacity: 0, y: 30, scale: 0.95 },
+        show: {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: {
+            type: "spring",
+            stiffness: 70,
+            damping: 12,
+            mass: 1
+          }
+        }
+      }}
+      whileHover={{
+        y: -8,
+        scale: 1.02,
+        borderColor: "rgba(249, 115, 22, 0.4)",
+        boxShadow: "0 20px 40px -15px rgba(249, 115, 22, 0.15)"
+      }}
+      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+      className="group relative border border-white/10 bg-white/5 overflow-hidden rounded-xl h-full cursor-pointer transition-colors hover:bg-white/10"
       onMouseMove={handleMouseMove}
     >
       <motion.div

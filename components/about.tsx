@@ -2,33 +2,43 @@ import { motion } from 'framer-motion';
 import { Check, Code } from 'lucide-react';
 import AnimatedBackground from './animated-background';
 
-const About = () => {
+const About = ({ isLoaded = true }: { isLoaded?: boolean }) => {
   return (
     <section id="about" className="py-32 bg-[#1a1a1a] relative overflow-hidden">
       <AnimatedBackground />
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-500/5 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <motion.div
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.2
+            }
+          }
+        }}
+        initial="hidden"
+        whileInView={isLoaded ? "show" : "hidden"}
+        viewport={{ once: true, amount: 0.1 }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
+      >
         <div className="grid md:grid-cols-2 gap-16 items-start">
 
           {/* Text Content */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0, x: -30 },
+              show: { opacity: 1, x: 0, transition: { duration: 0.8 } }
+            }}
             className="space-y-8"
           >
             <div>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-orange-400 text-sm font-medium mb-6"
-              >
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-orange-400 text-sm font-medium mb-6">
                 <Code size={14} />
                 <span>About Me</span>
-              </motion.div>
+              </div>
               <h2 className="text-5xl font-bold text-white mb-6 leading-tight">
                 Driving Innovation Through <span className="text-orange-500">Code</span>
               </h2>
@@ -38,37 +48,55 @@ const About = () => {
             </div>
 
             <div className="space-y-6 text-gray-400 text-lg leading-relaxed">
-              <p>
+              <motion.p variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
                 Curiosity and problem-solving have always drawn me toward programming. I'm a passionate full-stack developer with a strong foundation in both frontend and backend technologies. My expertise spans the MERN stack (MongoDB, Express, React, Node.js), PHP, Python, Java, and C.
-              </p>
-              <p>
+              </motion.p>
+              <motion.p variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }}>
                 Currently, I'm pursuing my MCA degree at Meghnad Saha Institute of Technology (MAKAUT) in Kolkata, where I am honored to be the Batch Topper, while working as a Software Developer. I bring practical experience from freelance projects and have a proven track record of building scalable, user-centric web applications.
-              </p>
+              </motion.p>
             </div>
 
-            <div className="pt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <motion.div
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1
+                  }
+                }
+              }}
+              className="pt-8 grid grid-cols-1 sm:grid-cols-2 gap-4"
+            >
               {[
                 "Full-Stack Development",
                 "Database Design",
                 "API Integration",
                 "Problem Solving"
               ].map((item, index) => (
-                <div key={index} className="flex items-center gap-3">
+                <motion.div
+                  key={index}
+                  variants={{
+                    hidden: { opacity: 0, x: -10 },
+                    show: { opacity: 1, x: 0 }
+                  }}
+                  className="flex items-center gap-3"
+                >
                   <div className="p-1 rounded-full bg-orange-500/10 text-orange-500">
                     <Check size={16} />
                   </div>
                   <span className="text-gray-300 font-medium">{item}</span>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Visual Side */}
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
+            variants={{
+              hidden: { opacity: 0, x: 30 },
+              show: { opacity: 1, x: 0, transition: { duration: 0.8 } }
+            }}
             className="relative"
           >
             <div className="relative z-10 bg-gradient-to-br from-white/10 to-transparent border border-white/10 rounded-3xl p-8 backdrop-blur-2xl">
@@ -97,7 +125,7 @@ const About = () => {
           </motion.div>
 
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

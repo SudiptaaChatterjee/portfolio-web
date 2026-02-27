@@ -14,17 +14,18 @@ import Preloader from '@/components/preloader';
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState('home');
+  const [loading, setLoading] = useState(true);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <Preloader />
+      <Preloader onComplete={() => setLoading(false)} />
       <Navbar activeSection={activeSection} setActiveSection={setActiveSection} />
-      <Hero setActiveSection={setActiveSection} />
-      <About />
-      <Experience />
-      <Projects />
-      <Skills />
-      <Contact />
+      <Hero setActiveSection={setActiveSection} isLoaded={!loading} />
+      <About isLoaded={!loading} />
+      <Experience isLoaded={!loading} />
+      <Projects isLoaded={!loading} />
+      <Skills isLoaded={!loading} />
+      <Contact isLoaded={!loading} />
       <Footer />
     </main>
   );

@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-const Preloader = () => {
+const Preloader = ({ onComplete }: { onComplete?: () => void }) => {
     const [phase, setPhase] = useState<'greeting' | 'terminal'>('greeting');
     const [greetingIdx, setGreetingIdx] = useState(0);
     const [logs, setLogs] = useState<string[]>([]);
@@ -39,7 +39,11 @@ const Preloader = () => {
                     logIdx++;
                 } else {
                     clearInterval(interval);
-                    setTimeout(() => setIsComplete(true), 500);
+                    setTimeout(() => {
+                        setIsComplete(true);
+                        // @ts-ignore
+                        onComplete?.();
+                    }, 500);
                 }
             }, 100);
             return () => clearInterval(interval);

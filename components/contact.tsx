@@ -8,7 +8,7 @@ import AnimatedBackground from './animated-background';
 // @ts-ignore
 import { sendEmail } from '@/app/actions/send-email';
 
-const Contact = () => {
+const Contact = ({ isLoaded = true }: { isLoaded?: boolean }) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [isPending, setIsPending] = useState(false);
 
@@ -56,9 +56,9 @@ const Contact = () => {
           <div>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              whileInView={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0 }}
               transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.1 }}
             >
               <h2 className="text-5xl md:text-6xl font-bold text-white mb-6">
                 Let's Work <br />
@@ -70,17 +70,30 @@ const Contact = () => {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.15,
+                    delayChildren: 0.2
+                  }
+                }
+              }}
+              initial="hidden"
+              whileInView={isLoaded ? "show" : "hidden"}
+              viewport={{ once: true, amount: 0.1 }}
               className="space-y-6"
             >
               {socialLinks.map((link, index) => {
                 const Icon = link.icon;
                 return (
-                  <a
+                  <motion.a
                     key={index}
+                    variants={{
+                      hidden: { opacity: 0, x: -20 },
+                      show: { opacity: 1, x: 0 }
+                    }}
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -93,7 +106,7 @@ const Contact = () => {
                       <h4 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors">{link.name}</h4>
                       <p className="text-gray-400">{link.label}</p>
                     </div>
-                  </a>
+                  </motion.a>
                 );
               })}
             </motion.div>
@@ -102,9 +115,9 @@ const Contact = () => {
           {/* Right Column: Form */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            whileInView={isLoaded ? { opacity: 1, x: 0 } : { opacity: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.1 }}
             className="bg-white/5 border border-white/10 rounded-3xl p-8 md:p-10 backdrop-blur-xl"
           >
             <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
@@ -112,9 +125,25 @@ const Contact = () => {
               Send a Message
             </h3>
 
-            <form ref={formRef} action={handleSubmit} className="space-y-6">
+            <motion.form
+              ref={formRef}
+              action={handleSubmit}
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                    delayChildren: 0.6
+                  }
+                }
+              }}
+              initial="hidden"
+              whileInView={isLoaded ? "show" : "hidden"}
+              className="space-y-6"
+            >
               <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
+                <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="space-y-2">
                   <label className="text-sm font-medium text-gray-400 ml-1">Name</label>
                   <input
                     type="text"
@@ -123,8 +152,8 @@ const Contact = () => {
                     className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors"
                     placeholder="John Doe"
                   />
-                </div>
-                <div className="space-y-2">
+                </motion.div>
+                <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="space-y-2">
                   <label className="text-sm font-medium text-gray-400 ml-1">Email</label>
                   <input
                     type="email"
@@ -133,10 +162,10 @@ const Contact = () => {
                     className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors"
                     placeholder="john@example.com"
                   />
-                </div>
+                </motion.div>
               </div>
 
-              <div className="space-y-2">
+              <motion.div variants={{ hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0 } }} className="space-y-2">
                 <label className="text-sm font-medium text-gray-400 ml-1">Message</label>
                 <textarea
                   name="message"
@@ -145,9 +174,10 @@ const Contact = () => {
                   className="w-full bg-black/20 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors resize-none"
                   placeholder="Tell me about your project..."
                 />
-              </div>
+              </motion.div>
 
-              <button
+              <motion.button
+                variants={{ hidden: { opacity: 0, scale: 0.95 }, show: { opacity: 1, scale: 1 } }}
                 type="submit"
                 disabled={isPending}
                 className="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -155,8 +185,8 @@ const Contact = () => {
                 {isPending ? 'Sending...' : (
                   <>Send Message <Send size={18} /></>
                 )}
-              </button>
-            </form>
+              </motion.button>
+            </motion.form>
           </motion.div>
 
         </div>

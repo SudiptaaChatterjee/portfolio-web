@@ -7,13 +7,16 @@ import { useState, useEffect } from 'react';
 
 interface HeroProps {
   setActiveSection: (section: string) => void;
+  isLoaded?: boolean;
 }
 
-const Hero = ({ setActiveSection }: HeroProps) => {
+const Hero = ({ setActiveSection, isLoaded = true }: HeroProps) => {
   const [displayName, setDisplayName] = useState('');
   const fullName = "Sudipta Chatterjee";
 
   useEffect(() => {
+    if (!isLoaded) return;
+
     let i = 0;
     const timer = setInterval(() => {
       if (i <= fullName.length) {
@@ -24,7 +27,7 @@ const Hero = ({ setActiveSection }: HeroProps) => {
       }
     }, 100);
     return () => clearInterval(timer);
-  }, []);
+  }, [isLoaded]);
 
   return (
     <section id="home" className="relative h-screen w-full bg-[#0a0a0a] overflow-hidden flex flex-col items-center justify-center text-white">
@@ -84,14 +87,23 @@ const Hero = ({ setActiveSection }: HeroProps) => {
             />
           </motion.div>
 
-          <h1 className="text-[20vw] md:text-[15vw] leading-none font-black text-white/5 select-none tracking-tighter mt-[-10vh] md:mt-0">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="text-[20vw] md:text-[15vw] leading-none font-black text-white/5 select-none tracking-tighter mt-[-10vh] md:mt-0"
+          >
             DEVELOPER
-          </h1>
+          </motion.h1>
           {/* Outline version overlay for effect */}
-          <h1 className="absolute text-[20vw] md:text-[15vw] leading-none font-black text-transparent select-none tracking-tighter mt-[-10vh] md:mt-0"
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0 }}
+            transition={{ duration: 1, ease: "easeOut" }}
+            className="absolute text-[20vw] md:text-[15vw] leading-none font-black text-transparent select-none tracking-tighter mt-[-10vh] md:mt-0"
             style={{ WebkitTextStroke: '2px rgba(255,255,255,0.1)' }}>
             DEVELOPER
-          </h1>
+          </motion.h1>
         </div>
 
         {/* Central Image & Floating Elements */}
@@ -100,8 +112,7 @@ const Hero = ({ setActiveSection }: HeroProps) => {
           {/* Main Character Image */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 50 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true }}
+            animate={isLoaded ? { opacity: 1, scale: 1, y: 0 } : { opacity: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
             className="relative w-[90vw] h-[60vh] max-w-[450px] md:w-[450px] md:h-[600px] -mt-[5vh] md:mt-0"
           >
@@ -144,15 +155,14 @@ const Hero = ({ setActiveSection }: HeroProps) => {
           <div className="md:hidden absolute inset-0 pointer-events-none">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
-              whileInView={{
+              animate={isLoaded ? {
                 opacity: 1,
                 x: 0,
                 y: [0, -5, 0] // Floating loop
-              }}
-              viewport={{ once: true }}
+              } : { opacity: 0 }}
               transition={{
-                opacity: { duration: 1, delay: 0.2, ease: "easeOut" },
-                x: { duration: 1, delay: 0.2, ease: "easeOut" },
+                opacity: { type: "spring", stiffness: 100, damping: 20, delay: 0.2 },
+                x: { type: "spring", stiffness: 100, damping: 20, delay: 0.2 },
                 y: { duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1.2 }
               }}
               className="absolute left-[8%] top-[15%] backdrop-blur-md bg-black/40 border border-orange-500/30 px-3 py-1.5 rounded-md flex items-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.1)]"
@@ -163,15 +173,14 @@ const Hero = ({ setActiveSection }: HeroProps) => {
 
             <motion.div
               initial={{ opacity: 0, x: 20 }}
-              whileInView={{
+              animate={isLoaded ? {
                 opacity: 1,
                 x: 0,
                 y: [0, 5, 0] // Floating loop
-              }}
-              viewport={{ once: true }}
+              } : { opacity: 0 }}
               transition={{
-                opacity: { duration: 1, delay: 0.4, ease: "easeOut" },
-                x: { duration: 1, delay: 0.4, ease: "easeOut" },
+                opacity: { type: "spring", stiffness: 100, damping: 20, delay: 0.4 },
+                x: { type: "spring", stiffness: 100, damping: 20, delay: 0.4 },
                 y: { duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.4 }
               }}
               className="absolute right-[8%] top-[25%] backdrop-blur-md bg-black/40 border border-orange-500/30 px-3 py-1.5 rounded-md flex items-center gap-2 shadow-[0_0_20px_rgba(249,115,22,0.1)]"
@@ -183,9 +192,14 @@ const Hero = ({ setActiveSection }: HeroProps) => {
 
           {/* Floating Card: Stack/Focus - Hidden on mobile */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 1.2, ease: "easeOut" }}
+            initial={{ opacity: 0, x: -50, scale: 0.9 }}
+            animate={isLoaded ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0 }}
+            transition={{
+              delay: 0.4,
+              type: "spring",
+              stiffness: 70,
+              damping: 15
+            }}
             className="hidden md:flex absolute left-[5%] top-[60%] backdrop-blur-md bg-white/5 border border-white/10 p-4 rounded-2xl items-center gap-4 hover:scale-105 transition-transform cursor-default"
           >
             <div className="p-3 bg-white/10 rounded-full">
@@ -202,9 +216,14 @@ const Hero = ({ setActiveSection }: HeroProps) => {
 
           {/* Floating Card: Status - Hidden on mobile */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.6, duration: 1.2, ease: "easeOut" }}
+            initial={{ opacity: 0, x: 50, scale: 0.9 }}
+            animate={isLoaded ? { opacity: 1, x: 0, scale: 1 } : { opacity: 0 }}
+            transition={{
+              delay: 0.6,
+              type: "spring",
+              stiffness: 70,
+              damping: 15
+            }}
             className="hidden md:block absolute right-[5%] top-[50%] backdrop-blur-md bg-white/10 border border-white/20 p-5 rounded-2xl max-w-xs hover:bg-white/15 transition-colors cursor-default"
           >
             <div className="flex items-center gap-3 mb-2">

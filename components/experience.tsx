@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Briefcase, GraduationCap, Calendar, Award } from 'lucide-react';
 import AnimatedBackground from './animated-background';
 
-const Experience = () => {
+const Experience = ({ isLoaded = true }: { isLoaded?: boolean }) => {
   const experiences = [
     {
       title: 'Software Developer (Pre-Placement)',
@@ -73,9 +73,8 @@ const Experience = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0 }}
           transition={{ duration: 0.5 }}
-          viewport={{ once: true }}
           className="mb-16 text-center"
         >
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -86,7 +85,21 @@ const Experience = () => {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <motion.div
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.2
+              }
+            }
+          }}
+          initial="hidden"
+          whileInView={isLoaded ? "show" : "hidden"}
+          viewport={{ once: true, amount: 0.1, margin: "-5% 0px" }}
+          className="grid lg:grid-cols-3 gap-8"
+        >
           {/* Experience Column */}
           <div className="lg:col-span-1">
             <div className="flex items-center gap-3 mb-8">
@@ -100,15 +113,19 @@ const Experience = () => {
               {experiences.map((exp, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
+                  variants={{
+                    hidden: { opacity: 0, x: -20 },
+                    show: {
+                      opacity: 1,
+                      x: 0,
+                      transition: { type: "spring", stiffness: 100, damping: 15 }
+                    }
+                  }}
                   className="relative group"
                 >
                   <span className="absolute -left-[41px] top-6 w-5 h-5 rounded-full border-4 border-[#1a1a1a] bg-white/20 group-hover:bg-orange-500 transition-colors"></span>
 
-                  <div className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 hover:border-orange-500/20 transition-all duration-300">
+                  <div className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 hover:border-orange-500/40 transition-all duration-300 group-hover:-translate-y-2 group-hover:scale-[1.02] cursor-default">
                     <div className="mb-2">
                       <h4 className="text-xl font-bold text-white group-hover:text-orange-400 transition-colors">{exp.title}</h4>
                       <p className="text-gray-400 font-medium text-sm">{exp.company}</p>
@@ -118,6 +135,34 @@ const Experience = () => {
                       {exp.period}
                     </div>
                     <p className="text-gray-400 mb-4 leading-relaxed text-sm">{exp.description}</p>
+
+                    {/* Granular Staggered Highlights */}
+                    <motion.div
+                      variants={{
+                        hidden: { opacity: 0 },
+                        show: {
+                          opacity: 1,
+                          transition: {
+                            staggerChildren: 0.1,
+                            delayChildren: 0.2
+                          }
+                        }
+                      }}
+                      className="flex flex-wrap gap-2"
+                    >
+                      {exp.highlights.map((highlight, hIdx) => (
+                        <motion.span
+                          key={hIdx}
+                          variants={{
+                            hidden: { opacity: 0, scale: 0.8 },
+                            show: { opacity: 1, scale: 1 }
+                          }}
+                          className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 bg-white/5 border border-white/10 rounded text-gray-400 group-hover:border-orange-500/30 group-hover:text-orange-200 transition-colors"
+                        >
+                          {highlight}
+                        </motion.span>
+                      ))}
+                    </motion.div>
                   </div>
                 </motion.div>
               ))}
@@ -137,15 +182,19 @@ const Experience = () => {
               {education.map((edu, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
+                  variants={{
+                    hidden: { opacity: 0, x: 20 },
+                    show: {
+                      opacity: 1,
+                      x: 0,
+                      transition: { type: "spring", stiffness: 100, damping: 15 }
+                    }
+                  }}
                   className="relative group"
                 >
                   <span className="absolute -left-[41px] top-6 w-5 h-5 rounded-full border-4 border-[#1a1a1a] bg-white/20 group-hover:bg-blue-400 transition-colors"></span>
 
-                  <div className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 hover:border-blue-500/20 transition-all duration-300">
+                  <div className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 hover:border-blue-500/40 transition-all duration-300 group-hover:-translate-y-2 group-hover:scale-[1.02] cursor-default">
                     <div className="mb-2">
                       <h4 className="text-xl font-bold text-white group-hover:text-blue-400 transition-colors">{edu.degree}</h4>
                       <p className="text-gray-400 font-medium text-sm">{edu.school}</p>
@@ -154,7 +203,14 @@ const Experience = () => {
                       <Calendar size={12} />
                       {edu.period}
                     </div>
-                    <p className="text-gray-400 text-sm">{edu.focus}</p>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-gray-400 text-sm"
+                    >
+                      {edu.focus}
+                    </motion.p>
                   </div>
                 </motion.div>
               ))}
@@ -174,15 +230,19 @@ const Experience = () => {
               {certifications.map((cert, index) => (
                 <motion.div
                   key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
-                  viewport={{ once: true }}
+                  variants={{
+                    hidden: { opacity: 0, x: 20 },
+                    show: {
+                      opacity: 1,
+                      x: 0,
+                      transition: { type: "spring", stiffness: 100, damping: 15 }
+                    }
+                  }}
                   className="relative group"
                 >
                   <span className="absolute -left-[41px] top-6 w-5 h-5 rounded-full border-4 border-[#1a1a1a] bg-white/20 group-hover:bg-green-400 transition-colors"></span>
 
-                  <div className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 hover:border-green-500/20 transition-all duration-300">
+                  <div className="bg-white/5 border border-white/5 rounded-2xl p-6 hover:bg-white/10 hover:border-green-500/40 transition-all duration-300 group-hover:-translate-y-2 group-hover:scale-[1.02] cursor-default">
                     <div className="mb-2">
                       <h4 className="text-xl font-bold text-white group-hover:text-green-400 transition-colors">{cert.title}</h4>
                       <p className="text-gray-400 font-medium text-sm">{cert.issuer}</p>
@@ -191,14 +251,20 @@ const Experience = () => {
                       <Calendar size={12} />
                       {cert.date}
                     </div>
-                    <p className="text-gray-400 text-sm">{cert.description}</p>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-gray-400 text-sm"
+                    >
+                      {cert.description}
+                    </motion.p>
                   </div>
                 </motion.div>
               ))}
             </div>
           </div>
-
-        </div>
+        </motion.div>
       </div>
     </section>
   );
